@@ -51,4 +51,4 @@ print(Fore.YELLOW + str(resultnew)) #вывод в файл
 razlichie = Sravnivanie(set(resultold), set(resultnew))
 print(Fore.GREEN + str(razlichie)) #вывод в файл
 print(Fore.WHITE)
-Port()
+#Port()
