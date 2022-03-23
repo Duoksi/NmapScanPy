@@ -29,26 +29,38 @@ def VivodIzFailaNew():
         content = pickle.load(file) #вывод из файла
     return set(content) #формирование списка из результата вывода
 
-def Sravnivanie(resultold, resultnew): #сравниваем два сканирования и вывести различия
+def Sravnivanie(resultold, resultnew): #сравниваем два сканирования и выводим различия
     razlichie = list(set(resultnew) - set(resultold))
     return razlichie
 
-def Port():
+def ScanPorts():
     nmap = nmap3.Nmap()
-    port = "-p "
-    port += str(80)
-    result = nmap.scan_command("46.235.184.240", arg = port)
-    # resultclean = re.findall('\'protocol\'', str(result))
-    # set(resultclean)
-    # print(set(resultclean))
-    print(result)                   
+    attribute = "-p " #атрибут команды скана портов для nmap
+    port = input("Введите порты(через запятую или диапазоном)\n")
+    attribute += str(port) #добавление портов к атрибуту которые будут сканироваться
+    
+    #46.235.184.240
+    ipport = dict()
+    IPrange = ['93.187.72.82', '93.187.72.94', '93.187.72.115', '93.187.72.241', '93.187.72.19', '93.187.72.59', '93.187.72.208', 
+    '93.187.72.179', '93.187.72.24', '93.187.72.137', '93.187.72.136', '93.187.72.130']
+    for ip in IPrange: #создается переменная ip которая берет из списка по одному адресу и сканирует его порты
+        result = ""
+        result = nmap.scan_command(ip, arg = attribute) #команда которая передается в Nmap с атрибутом для сканирования портов
+        print(result)
+        # самим списком портов и айпи адресом который сканируется
+        resultclean = ""
+        #очистка вывода чтобы осталось только состояние портов
+        resultclean = re.findall('\'protocol\': \'\w+\', \'portid\': \'\w+\', \'state\': \'\w+\'', str(result))
+        for res in resultclean:
+            ipport.setdefault(ip, []).append(res) #запись отсканированных портов в словарь ip адресов
+    print(ipport)
 
 #реализация функций
 resultold = VivodIzFailaOld()
 print(Fore.BLUE + str(resultold)) #вывод в консоль
 resultnew = VivodIzFailaNew()
-print(Fore.YELLOW + str(resultnew)) #вывод в файл
+print(Fore.YELLOW + str(resultnew)) #вывод в консоль
 razlichie = Sravnivanie(set(resultold), set(resultnew))
-print(Fore.GREEN + str(razlichie)) #вывод в файл
+print(Fore.GREEN + str(razlichie)) #вывод в консоль
 print(Fore.WHITE)
-#Port()
+print(nmap3.__file__)
